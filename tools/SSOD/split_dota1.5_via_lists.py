@@ -126,7 +126,7 @@ def split_img_with_list(list_dir, src_dir):
 
 
 if __name__ == '__main__':
-    list_dir = 'tools/misc/split_dota1.5_lists'
+    list_dir = 'tools/SSOD/split_dota1.5_lists'
     src_dir = 'data/split_ss_dota1_5'
 
     split_img_with_list(list_dir, src_dir)

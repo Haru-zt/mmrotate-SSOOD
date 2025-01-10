@@ -3,8 +3,8 @@ custom_imports = dict(
 )
 
 # dataset settings
-dataset_type = "DOTAv15Dataset"
-data_root = "data/split_ss_dota1_5/"
+dataset_type = "DOTADataset"
+data_root = "data/split_ss_dota/"
 backend_args = None
 
 branch_field = ["sup", "unsup_teacher", "unsup_student"]
@@ -133,7 +133,7 @@ labeled_dataset = dict(
     data_root=data_root,
     ann_file="train_10_labeled/annfiles",
     data_prefix=dict(img_path="train_10_labeled/images/"),
-    filter_cfg=dict(filter_empty_gt=True),
+    filter_cfg=dict(filter_empty_gt=True), 
     pipeline=sup_pipeline,
 )
 
