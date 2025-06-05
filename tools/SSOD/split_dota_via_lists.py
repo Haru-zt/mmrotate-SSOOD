@@ -1,7 +1,3 @@
-# Copyright (c) OpenMMLab. All rights reserved.
-# This code was modified from SOOD
-# (https://github.com/HamPerdredes/SOOD/blob/main/
-# tools/data/dota/split_data_via_list.py)
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import glob
@@ -143,7 +139,8 @@ def split_img_with_list(list_dir, src_dir):
 
 if __name__ == '__main__':
 
-    list_dir = './tools/SSOD/split_dota1.5_lists'
-    src_dir = './data/split_ss_dota1_5'
+    list_dir = './tools/SSOD/split_dota1.5_lists'  # dota1.0 has the same split lists with dota1.5
+    src_dir = './data/split_ss_dota'
 
     split_img_with_list(list_dir, src_dir)
+

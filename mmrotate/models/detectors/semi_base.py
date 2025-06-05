@@ -13,7 +13,7 @@ from torch import Tensor
 
 from mmrotate.registry import MODELS
 from mmrotate.structures import RotatedBoxes
-from mmrotate.structures.bbox import rbox_project
+from mmrotate.structures.bbox import bbox_project
 
 
 @MODELS.register_module()
@@ -169,10 +169,11 @@ class RotatedSemiBaseDetector(BaseDetector):
         self.teacher.eval()
         results_list = self.teacher.predict(
             batch_inputs, batch_data_samples, rescale=False)
+        self.teacher.train()      # this operation is not needed in fact, but we prefer to add it to aid comprehension  
         batch_info = {}
         for data_samples, results in zip(batch_data_samples, results_list):
             data_samples.gt_instances = copy.deepcopy(results.pred_instances)
-            data_samples.gt_instances.bboxes = rbox_project(
+            data_samples.gt_instances.bboxes = bbox_project(
                 data_samples.gt_instances.bboxes,
                 torch.from_numpy(data_samples.homography_matrix).inverse().to(
                     self.data_preprocessor.device), data_samples.ori_shape)
@@ -184,7 +185,7 @@ class RotatedSemiBaseDetector(BaseDetector):
         for pseudo_instances, data_samples in zip(batch_pseudo_instances,
                                                   batch_data_samples):
             data_samples.gt_instances = pseudo_instances.gt_instances
-            data_samples.gt_instances.bboxes = rbox_project(
+            data_samples.gt_instances.bboxes = bbox_project(
                 data_samples.gt_instances.bboxes,
                 torch.tensor(data_samples.homography_matrix).to(
                     self.data_preprocessor.device), data_samples.img_shape)

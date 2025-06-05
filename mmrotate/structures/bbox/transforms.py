@@ -118,16 +118,15 @@ def distance2obb(points: torch.Tensor,
     return torch.cat([ctr, wh, angle_regular], dim=-1)
 
 
-def rbox_project(
+def bbox_project(
     bboxes: Union[torch.Tensor, np.ndarray],
     homography_matrix: Union[torch.Tensor, np.ndarray],
     img_shape: Optional[Tuple[int, int]] = None
 ) -> Union[torch.Tensor, np.ndarray]:
-    """Geometric transformation for rbox. modified from
-    mmdet/structures/bbox/transforms.py/bbox_project to support rbox.
+    """Geometric transformation for bbox.
 
     Args:
-        bboxes (Union[torch.Tensor, np.ndarray]): Shape (n, 5) for rboxes.
+        bboxes (Union[torch.Tensor, np.ndarray]): Shape (n, 4) for bboxes.
         homography_matrix (Union[torch.Tensor, np.ndarray]):
             Shape (3, 3) for geometric transformation.
         img_shape (Tuple[int, int], optional): Image shape. Defaults to None.
@@ -139,19 +138,64 @@ def rbox_project(
         bboxes = torch.from_numpy(bboxes)
     if isinstance(homography_matrix, np.ndarray):
         homography_matrix = torch.from_numpy(homography_matrix)
-
-    corners = rbox2qbox(bboxes).reshape(-1, 2)
+    """
+    fix
+    """
+    assert bboxes.shape[1] in [4, 5]
+    if bboxes.shape[1] == 5:
+        corners = rbox2qbox(bboxes).reshape(-1, 2)
+    elif bboxes.shape[1] == 4:
+        corners = bbox2corner(bboxes)
     corners = torch.cat(
         [corners, corners.new_ones(corners.shape[0], 1)], dim=1)
     corners = torch.matmul(homography_matrix, corners.t()).t()
     # Convert to homogeneous coordinates by normalization
     corners = corners[:, :2] / corners[:, 2:3]
 
-    corners = corners.reshape(-1, 8)
-    corners[:, 0::2] = corners[:, 0::2].clamp(0, img_shape[1])
-    corners[:, 1::2] = corners[:, 1::2].clamp(0, img_shape[0])
-    bboxes = qbox2rbox(corners)
+    """
+    fix
+    """
 
+    if bboxes.shape[1] == 5:
+        corners = corners.reshape(-1, 8)
+        corners[:, 0::2] = corners[:, 0::2].clamp(0, img_shape[1])
+        corners[:, 1::2] = corners[:, 1::2].clamp(0, img_shape[0])
+        bboxes = qbox2rbox(corners)
+    elif bboxes.shape[1] == 4:
+        bboxes = corner2bbox(corners)
+        if img_shape is not None:
+            bboxes[:, 0::2] = bboxes[:, 0::2].clamp(0, img_shape[1])
+            bboxes[:, 1::2] = bboxes[:, 1::2].clamp(0, img_shape[0])
+    # fix problem
+    # if img_shape is not None:
+    #     bboxes[:, 0::2] = bboxes[:, 0::2].clamp(0, img_shape[1])
+    #     bboxes[:, 1::2] = bboxes[:, 1::2].clamp(0, img_shape[0])
     if bboxes_type is np.ndarray:
         bboxes = bboxes.numpy()
     return bboxes
+
+def bbox2corner(bboxes: torch.Tensor) -> torch.Tensor:
+    """Convert bbox coordinates from (x1, y1, x2, y2) to corners ((x1, y1),
+    (x2, y1), (x1, y2), (x2, y2)).
+
+    Args:
+        bboxes (Tensor): Shape (n, 4) for bboxes.
+    Returns:
+        Tensor: Shape (n*4, 2) for corners.
+    """
+    x1, y1, x2, y2 = torch.split(bboxes, 1, dim=1)
+    return torch.cat([x1, y1, x2, y1, x1, y2, x2, y2], dim=1).reshape(-1, 2)
+
+def corner2bbox(corners: torch.Tensor) -> torch.Tensor:
+    """Convert bbox coordinates from corners ((x1, y1), (x2, y1), (x1, y2),
+    (x2, y2)) to (x1, y1, x2, y2).
+
+    Args:
+        corners (Tensor): Shape (n*4, 2) for corners.
+    Returns:
+        Tensor: Shape (n, 4) for bboxes.
+    """
+    corners = corners.reshape(-1, 4, 2)
+    min_xy = corners.min(dim=1)[0]
+    max_xy = corners.max(dim=1)[0]
+    return torch.cat([min_xy, max_xy], dim=1)

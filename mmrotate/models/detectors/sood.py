@@ -16,7 +16,7 @@ from mmdet.utils import ConfigType, OptConfigType, OptMultiConfig
 from mmrotate.models.detectors.semi_base import RotatedSemiBaseDetector
 from mmrotate.models.losses import OT_Loss
 from mmrotate.registry import MODELS
-from mmrotate.structures.bbox import rbox2qbox, rbox_project
+from mmrotate.structures.bbox import rbox2qbox, bbox_project
 
 import cv2
 import numpy as np
@@ -105,7 +105,7 @@ class SOOD(RotatedSemiBaseDetector):
 
         for data_samples, results in zip(batch_data_samples, results_list):
             data_samples.gt_instances = copy.deepcopy(results.pred_instances)
-            data_samples.gt_instances.bboxes = rbox_project(
+            data_samples.gt_instances.bboxes = bbox_project(
                 data_samples.gt_instances.bboxes,
                 torch.from_numpy(data_samples.homography_matrix)
                 .inverse()

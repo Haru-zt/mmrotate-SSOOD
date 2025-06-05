@@ -3,13 +3,16 @@
 ## Introduction
 **mmrotate-SSOOD** is a simplified, modular, and flexible framework designed specifically for **Semi-Supervised Oriented Object Detection (SSOOD)** tasks. 
 
+## **Support New Method!!!**
+We now support **Denser Teacher(TCSVT 2025)**(https://ieeexplore.ieee.org/document/10802941)!
+
 ## Key Features
 Our framework offers the following advantages:
 
 - **Simplified Implementation**: Implementing custom semi-supervised detection methods is straightforward. You only need to modify **two key functions**, allowing faster experimentation and development.
 - **Flexible Data Augmentation**: Built upon MMCV, our framework supports seamless integration of custom data augmentation techniques. We also provide ready-to-use augmentation configs for fair comparisons with prior works.
 - **Dataset Splitting Tools**: Easily split your dataset into labeled and unlabeled subsets using our user-friendly tools, saving time on data preparation for semi-supervised learning.
-- **Extensible Method Support**: Currently, we support **SOOD(CVPR 2023)**(https://arxiv.org/abs/2304.04515) and **Dense Teacher(ECCV 2022)**(https://arxiv.org/abs/2207.02541), with plans to add more state-of-the-art semi-supervised learning methods in future updates.
+- **Extensible Method Support**: Currently, we support **Denser Teacher(TCSVT 2025)**(https://ieeexplore.ieee.org/document/10802941), **SOOD(CVPR 2023)**(https://arxiv.org/abs/2304.04515) and **Dense Teacher(ECCV 2022)**(https://arxiv.org/abs/2207.02541), with plans to add more state-of-the-art semi-supervised learning methods in future updates.
 
 ## Future Methods Support
 We plan to continually update this framework to include more state-of-the-art semi-supervised learning methods. Here are some of the methods we aim to support in future updates:
@@ -20,7 +23,6 @@ We plan to continually update this framework to include more state-of-the-art se
    Focuses on ambiguities in semi-supervised object detection.
 
 ## Requirements
-
 To ensure compatibility, please install the following dependencies:
 
 ### 1. PyTorch
@@ -120,6 +122,16 @@ After that, the data folder should be organized as follows:
 │   │   │   ├── annfiles
 ```
 
+For DOTAv1.0, the preparation is the same with DOTAv1.5.
+
+## Training
+
+For Denser Teacher
+- To train Denser Teacher with 10% labeled data, run:
+```
+ CUDA_VISIBLE_DEVICES=0,1 PORT=29501 bash ./tools/dist_train.sh configs/rotated_denser_teacher/rotated-denser-teacher_2xb3-180000k_semi-0.1-dotav1.5.py 2
+```
+
 ## Results
 
 DOTA1.5
@@ -135,9 +147,29 @@ SOOD
 Dense Teacher
 |         Backbone         | Setting | mAP50 | mAP50 in Paper | Mem (GB) |                              Config                              |
 | :----------------------: | :-----: | :---: | :-------------: | :------: | :-------------------------------------------------------------: |
-| ResNet50 (1024,1024,200) |   10%   | 47.10 |                 |          | [config](configs/rotated_dense_teacher/rotated-dense-teacher_2xb3-180000k_semi-0.1-dotav1.5.py) |
+| ResNet50 (1024,1024,200) |   10%   | 47.10 |        -        |          | [config](configs/rotated_dense_teacher/rotated-dense-teacher_2xb3-180000k_semi-0.1-dotav1.5.py) |
 | ResNet50 (1024,1024,200) |   20%   |       |                 |          | [config](configs/rotated_dense_teacher/rotated-dense-teacher_2xb3-180000k_semi-0.2-dotav1.5.py) |
 | ResNet50 (1024,1024,200) |   30%   |       |                 |          | [config](configs/rotated_dense_teacher/rotated-dense-teacher_2xb3-180000k_semi-0.3-dotav1.5.py) |
+
+Denser Teacher  
+| **Backbone**               | **Setting** | **mAP50** | **Mem (GB)** | **Config**                                                                 |
+|----------------------------|-------------|-----------|--------------|-----------------------------------------------------------------------------|
+| ResNet50 (1024,1024,200)    | 1%          | 20.98     |              | [config](configs/rotated_denser_teacher/rotated-denser-teacher_2xb3-180000k_semi-0.01-dotav1.5.py) |
+| ResNet50 (1024,1024,200)    | 5%          | 43.40     |              | [config](configs/rotated_denser_teacher/rotated-denser-teacher_2xb3-180000k_semi-0.05-dotav1.5.py) |
+| ResNet50 (1024,1024,200)    | 10%         | 52.05     |              | [config](configs/rotated_denser_teacher/rotated-denser-teacher_2xb3-180000k_semi-0.1-dotav1.5.py)  |
+| ResNet50 (1024,1024,200)    | 20%         | 57.49     |              | [config](configs/rotated_denser_teacher/rotated-denser-teacher_2xb3-180000k_semi-0.2-dotav1.5.py)  |
+| ResNet50 (1024,1024,200)    | 30%         | 60.40     |              | [config](configs/rotated_denser_teacher/rotated-denser-teacher_2xb3-180000k_semi-0.3-dotav1.5.py)  |
+
+
+DOTAv1.0
+Denser Teacher  
+| **Backbone**               | **Setting** | **mAP50** | **Mem (GB)** | **Config**                                                                 |
+|----------------------------|-------------|-----------|--------------|-----------------------------------------------------------------------------|
+| ResNet50 (1024,1024,200)    | 1%          | 19.45     |              | [config](configs/rotated_denser_teacher/rotated-denser-teacher_2xb3-180000k_semi-0.01-dotav1.0.py) |
+| ResNet50 (1024,1024,200)    | 5%          | 45.84     |              | [config](configs/rotated_denser_teacher/rotated-denser-teacher_2xb3-180000k_semi-0.05-dotav1.0.py) |
+| ResNet50 (1024,1024,200)    | 10%         | 52062     |              | [config](configs/rotated_denser_teacher/rotated-denser-teacher_2xb3-180000k_semi-0.1-dotav1.0.py)  |
+| ResNet50 (1024,1024,200)    | 20%         | 59.20     |              | [config](configs/rotated_denser_teacher/rotated-denser-teacher_2xb3-180000k_semi-0.2-dotav1.0.py)  |
+| ResNet50 (1024,1024,200)    | 30%         | 62.82     |              | [config](configs/rotated_denser_teacher/rotated-denser-teacher_2xb3-180000k_semi-0.3-dotav1.0.py)  |
 
 
 
