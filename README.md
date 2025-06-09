@@ -53,7 +53,7 @@ conda activate ssood
 # Install mmdet
 pip install -U openmim
 mim install mmengine
-mim install "mmcv>=2.0.0"
+mim install "mmcv==2.0.0"
 mim install mmdet==3.0.0
 
 # Install mmpretrain
