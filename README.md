@@ -83,7 +83,7 @@ Please refer to [data_preparation.md](tools/data/dota/README.md) to prepare the 
 For partial labeled setting, we split the DOTA-v1.5's train set via the author released [split data list](tools/SSOD/split_dota1.5_lists) and [split tool](tools/SSOD/split_dota1.5_via_lists.py):
 
 ```angular2html
-python tools/SOOD/split_dota1.5_via_lists.py
+python tools/SSOD/split_dota1.5_via_lists.py
 ```
 
 For fully labeled setting, we use DOTA-V1.5 train as labeled set and DOTA-V1.5 test as unlabeled set.
@@ -162,6 +162,7 @@ Denser Teacher
 
 
 DOTAv1.0
+
 Denser Teacher  
 | **Backbone**               | **Setting** | **mAP50** | **Mem (GB)** | **Config**                                                                 |
 |----------------------------|-------------|-----------|--------------|-----------------------------------------------------------------------------|
